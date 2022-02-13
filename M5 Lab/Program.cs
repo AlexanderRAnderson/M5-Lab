@@ -26,67 +26,33 @@ namespace M5_Lab
     class COMP
     {
         ModuleIF newModule;
-        string function;
 
         public COMP(String s)
         {
-            function = s;
-            OperatorAC factory = new ModuleFactory();
-            Console.WriteLine(s);
+            OperatorIF factory = new ModuleFactory();
             newModule = factory.createModule(s);
+            System.Diagnostics.Debug.WriteLine(newModule);
             Form1 form = Form1.getForm();
-            newModule.doOperation(form.getTextBoxNumber());
+            form.setTextBoxNumber(newModule.doOperation());
         }
     }
-    class ModuleIF
+    interface ModuleIF
         {
-            public ModuleIF()
-        {
-
+            
+            public abstract double doOperation();
+            
         }
-            public double doOperation(double d)
-            {
-                return 0;
-            }
-        }
-        #region
-        interface NoInput
+        
+    interface OperatorIF
         {
-            public double doOperation();
+            public ModuleIF createModule(String s);
         }
 
-        interface TakeInput
-        {
-            public double doOperation()
-            {
-                Form form = new Form();
-                form.Controls.Add(new Button());
-                TextBox textBox = new TextBox();
-                form.Controls.Add(textBox);
-                return doOperation(double.Parse(textBox.Text));
-            }
-            public double doOperation(double d);
-        }
-    #endregion
-    abstract class OperatorAC
-        {
-            abstract public ModuleIF createModule(String s);
-        }
-
-    class NoInputFactory : OperatorAC
+    class ModuleFactory : OperatorIF
     {
-        public override ModuleIF createModule(string s)
-        {
-            throw new NotImplementedException();
-        }
-    }
-
-    class ModuleFactory : OperatorAC
-    {
-        public override ModuleIF createModule(string s)
-        {
-            Assembly assembly = Assembly.GetExecutingAssembly();
-            Type type = Type.GetType(s);
+        public ModuleIF createModule(string s)
+        { 
+            Type type = Type.GetType("M5_Lab." + s);
 
             Object o = Activator.CreateInstance(type);
             ModuleIF module = (ModuleIF) o;
@@ -95,58 +61,20 @@ namespace M5_Lab
         }
     }
 
-    class Log : ModuleIF
+    interface HasInput
     {
-        public double doOperation(double d)
+        protected static double getInput()
         {
-            Form1 form = Form1.getForm();
-            return Math.Log(form.getTextBoxNumber());
+            Form2 form = new Form2();
+            DialogResult dialogResult = form.ShowDialog();
+            if(dialogResult == DialogResult.OK)
+            {
+                TextBox text = (TextBox) form.Controls.Find("textBox1", true).ElementAt(0);
+                return double.Parse(text.Text);
+            }
+            return 0;
         }
     }
 
-    class Sum : ModuleIF
-    {
-        public double doOperation(double d)
-        {
-            Form1 form = Form1.getForm();
-            return d + form.getTextBoxNumber();
-        }
-    }
-
-
-    class Subtract : ModuleIF
-    {
-        public double doOperation(double d)
-        {
-            Form1 form = Form1.getForm();
-            return form.getTextBoxNumber() - d;
-        }
-    }
-
-    class Initialize : ModuleIF
-    {
-        public double doOperation(double d)
-        {
-            Form1 form = Form1.getForm();
-            return d;
-        }
-    }
-
-    class Power : ModuleIF
-    {
-        public double doOperation(double d)
-        {
-            Form1 form = Form1.getForm();
-            return Math.Pow(form.getTextBoxNumber(), d);
-        }
-    }
-
-    class Product : ModuleIF
-    {
-        public double doOperation(double d)
-        {
-            Form1 form = Form1.getForm();
-            return form.getTextBoxNumber() * d;
-        }
-    }
+    
 }

@@ -40,11 +40,17 @@ namespace M5_Lab
         private void button1_Click(object sender, EventArgs e)
         {
             COMP comp = new COMP(comboBox1.Text);
+            
         }
 
         public double getTextBoxNumber()
         {
             return double.Parse(textBox1.Text);
+        }
+
+        public void setTextBoxNumber(double d)
+        {
+            textBox1.Text = d.ToString();
         }
         public void setTextBox(double d)
         {
@@ -54,6 +60,11 @@ namespace M5_Lab
         public static Form1 getForm()
         {
             return form;
+        }
+
+        public void turnFormOff()
+        {
+            this.Close();
         }
     }
 }
